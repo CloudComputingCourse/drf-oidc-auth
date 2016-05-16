@@ -1,5 +1,6 @@
 from calendar import timegm
 import datetime
+from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
@@ -16,7 +17,7 @@ from .settings import api_settings
 from django.utils.translation import ugettext as _
 
 # From django-oidc plugin
-default_ssl_check = getattr(settings, 'OIDC_VERIFY_SSL', True)
+default_ssl_check = getattr(django_settings, 'OIDC_VERIFY_SSL', True)
 
 def get_user_by_id(request, id_token):
     User = get_user_model()
