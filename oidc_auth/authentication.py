@@ -15,6 +15,8 @@ from .util import cache
 from .settings import api_settings
 from django.utils.translation import ugettext as _
 
+# From django-oidc plugin
+default_ssl_check = getattr(settings, 'OIDC_VERIFY_SSL', True)
 
 def get_user_by_id(request, id_token):
     User = get_user_model()
@@ -29,7 +31,7 @@ def get_user_by_id(request, id_token):
 class BaseOidcAuthentication(BaseAuthentication):
     @cached_property
     def oidc_config(self):
-        return requests.get(api_settings.OIDC_ENDPOINT + '/.well-known/openid-configuration').json()
+        return requests.get(api_settings.OIDC_ENDPOINT + '/.well-known/openid-configuration', verify=default_ssl_check).json()
 
 
 class BearerTokenAuthentication(BaseOidcAuthentication):
@@ -69,7 +71,8 @@ class BearerTokenAuthentication(BaseOidcAuthentication):
     @cache(ttl=api_settings.OIDC_BEARER_TOKEN_EXPIRATION_TIME)
     def get_userinfo(self, token):
         response = requests.get(self.oidc_config['userinfo_endpoint'],
-                                headers={'Authorization': 'Bearer {0}'.format(token.decode('ascii'))})
+                                headers={'Authorization': 'Bearer {0}'.format(token.decode('ascii'))},
+                                verify=default_ssl_check)
         response.raise_for_status()
 
         return response.json()
