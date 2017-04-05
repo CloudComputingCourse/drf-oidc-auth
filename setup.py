@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='drf-oidc-auth',
+    name='drf-oidc-auth-cmucc',
     version='0.8',
     packages=['oidc_auth'],
     url='https://github.com/ByteInternet/drf-oidc-auth',
